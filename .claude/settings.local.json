@@ -12,7 +12,9 @@
       "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: Add Claude Code Project with Snake Game and Checkout System\n\n- Java Swing Snake Game with MVC architecture\n- HTML5/JavaScript Snake Game (browser version)  \n- Spring Boot Payment Checkout System with Allinpay integration\n- Complete project documentation in CLAUDE.md\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git push -u origin master)",
       "Bash(rm -rf douabo)",
-      "Bash(git add -A)"
+      "Bash(git add -A)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nRemove douabo folder\n\nClean up project structure by removing unused douabo directory.\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push origin master)"
     ],
     "deny": []
   }

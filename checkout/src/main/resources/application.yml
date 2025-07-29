@@ -3,9 +3,19 @@ spring:
     name: checkout
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/checkout_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/checkout_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: P@Ut97U8
+    # HikariCP连接池配置
+    hikari:
+      minimum-idle: 5                     # 最小空闲连接数
+      maximum-pool-size: 20               # 最大连接池大小
+      auto-commit: true                   # 自动提交
+      idle-timeout: 300000               # 空闲连接超时时间(5分钟)
+      pool-name: HikariCP-Checkout       # 连接池名称
+      max-lifetime: 1200000              # 连接最大生命周期(20分钟)
+      connection-timeout: 30000          # 连接超时时间(30秒)
+      connection-test-query: SELECT 1     # 连接测试查询
 
 allinpay:
   appid: 00011114
@@ -15,6 +25,49 @@ allinpay:
 
 server:
   port: 8080
+  # 生产优化配置
+  tomcat:
+    threads:
+      max: 100                  # 最大工作线程数
+      min-spare: 10            # 最小空闲线程数
+    max-connections: 8192      # 最大连接数
+    accept-count: 100          # 等待队列长度
+    connection-timeout: 20000  # 连接超时时间
+
+# 监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when_authorized
+      show-components: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: checkout
+      environment: ${spring.profiles.active:default}
+
+# 日志配置
+logging:
+  level:
+    com.allinpay.checkout: INFO
+    org.springframework.web: WARN
+    org.mybatis: WARN
+    org.apache.ibatis: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{traceId:-}] %logger{36} - %msg%n"
+  file:
+    name: logs/checkout.log
+    max-size: 100MB
+    max-history: 30
+    total-size-cap: 1GB
 
 mybatis-plus:
   configuration:

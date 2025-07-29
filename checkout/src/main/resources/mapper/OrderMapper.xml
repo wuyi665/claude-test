@@ -2,19 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.allinpay.checkout.mapper.OrderMapper">
     <insert id="insertOrder">
-        INSERT INTO `order_info` (bizseq, appid, amount, cusid, status)
-        VALUES (#{bizseq}, #{appid}, #{amount}, #{cusid}, #{status})
+        INSERT INTO `order_info` (bizseq, appid, amount, cusid, status, create_time)
+        VALUES (#{bizseq}, #{appid}, #{amount}, #{cusid}, #{status}, NOW())
     </insert>
     <update id="updateOrderStatus">
         UPDATE `order_info`
-        SET status = #{status}
+        SET status = #{status}, update_time = NOW()
         WHERE bizseq = #{bizseq}
+        AND deleted = 0
     </update>
 
     <select id="queryOrderByBizseq" resultType="com.allinpay.checkout.dto.OrderInfo">
-        SELECT bizseq, appid, amount, cusid
+        SELECT bizseq, appid, amount, cusid, status
         FROM `order_info`
         WHERE bizseq = #{bizseq}
+        AND deleted = 0
     </select>
 
     <select id="queryOrderStatus" resultType="java.lang.String">

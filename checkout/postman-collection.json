@@ -1,0 +1,147 @@
+{
+  "info": {
+    "name": "Checkout Payment System API Tests",
+    "description": "测试通联支付结账系统的API接口",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. 创建订单 (Insert Order)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "appid",
+              "value": "00011114",
+              "type": "text"
+            },
+            {
+              "key": "cusid",
+              "value": "customer123",
+              "type": "text"
+            },
+            {
+              "key": "amount",
+              "value": "100.00",
+              "type": "text"
+            },
+            {
+              "key": "bizseq",
+              "value": "ORDER20250729001",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/InsertOrder",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "InsertOrder"]
+        }
+      }
+    },
+    {
+      "name": "2. 查询订单 (Query Order)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "bizseq",
+              "value": "ORDER20250729001",
+              "type": "text"
+            },
+            {
+              "key": "sign",
+              "value": "签名值（需要RSA签名）",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/QueryOrder",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "QueryOrder"]
+        }
+      }
+    },
+    {
+      "name": "3. 支付通知 (Payment Notify)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "bizseq",
+              "value": "ORDER20250729001",
+              "type": "text"
+            },
+            {
+              "key": "sign",
+              "value": "签名值（需要RSA签名）",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/Notify",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "Notify"]
+        }
+      }
+    },
+    {
+      "name": "4. 健康检查 (Health Check)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/actuator/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["actuator", "health"]
+        }
+      }
+    },
+    {
+      "name": "5. 应用指标 (Metrics)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/actuator/metrics",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["actuator", "metrics"]
+        }
+      }
+    }
+  ]
+}

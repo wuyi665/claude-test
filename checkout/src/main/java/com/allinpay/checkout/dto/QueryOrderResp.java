@@ -16,4 +16,5 @@ public class QueryOrderResp {
     private String extresere;
     private String amount;
     private String asinfo;
+    private String status;  // 添加订单状态字段
 }
