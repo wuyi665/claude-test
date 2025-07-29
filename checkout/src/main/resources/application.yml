@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: checkout
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/checkout_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: P@Ut97U8
+
+allinpay:
+  appid: 00011114
+  c: 1000DBTAPTur
+  priKey: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDMsDv567CJaRqYbaWI8MSJSbuxbFIdZHxhywWD1qa8SrLVBLrO/5NyMNj3iiqfbv+IsfgW6rzYLEkyQI9qyfwOGF+YNLVtOVgia8LNydQ5wja41z1j6d+pzMQCEH7bYJnxOt5lZVYdJaj8B2VdGZIGjiG5Qm/HBAXruNdC9xz8dpE/JlHhaXyfEu2hR3uBNwFBs0OF1rTx0UBbNcsJeCcix9cH71I+B7vU9Kx5dk+bZEdokXQz0YqE3aMfBeLkk/3go2KT5UywGGbVJr2OvrUkiF9uKPJoXG4YCmeJuO1uBCoteV9MHdJiCL3WBFQQhhoW0KYgo4wzLjnPlEbaZitlAgMBAAECggEAKDkHiCyjE9WWFtcRHPBnRq05F3v4RPNep9779fTj7gNl0gtsZEn/4QQtVrONfagTyfpjDKnTM028koXySONpRyHOAzx0XILUyWrQrJzZOgJqu3b8htpKC/WDnP4914FLrwZI9rbrra2dX+1aI2nncqdShDPEgGDPgwtfLbceuJOALp6PJ80gznZN66ss469cwoPzZBYwc7Hj+gq3vdoiJuVtW1dpQprvmsrrhYZSwEhc0QaQm9fObrqtyqGOPOQ6K/65NFRxbVZtrQWbL2GlypOzn5W4wwAGx3apMXD6mquA3pyi21N15H9Mz3Tdx0NMtmx3NA7NO8ROrvIG9XM1rwKBgQDmBKZUc3xW54x0HXCanK6U4EjPLBiyOrY+igzXP7eu5aSSdU6db181T9wTFcIC4ES74LRtHNuDrp4kFY+Susv0Q6ENt+KNNQliQ8oaD4PZyMCAZljfsP3q850YIl7OKMm4KRjjMTVRvy5XJOcDPefErA1I6UJFJRtcYkAwXSf2ywKBgQDjzyIzHOrhC9YE6SBTrngskwR2PPyqY6aEoEu2pEYwhKC0GngknHtq+/Tm3YzWE5ah+a2Bpl+LSK8Z82FxmWXHZR0uzT+R3/FekR4jSJae4ojS6LyJNxH8azG2aPLk8fTzZrvLoM+IAHcVhkYSMblCT0xKtZiIaavO12nlYX/wjwKBgQC8BikA97Y4Q+boM/iMKm/7equJzn4RkzTOQoLkoU1BRq8UmZe90gB9z94SK8MAHtuQyMo0N1apeeADlyxZwSBfd7j7QcmLrEMTdF6MlwosyJGzY/ZaRJALs0BDLjVZSLY8ODwD24G+ZQ04Zw3/9Ga0uf/SDfsCEqcfCaF25293qQKBgGXC0hkY8sbCfcDFzn3y8pWeuqCCj68hQnH+FLQqX3wu0oaBSGe6Sts4X2Z9UvsR1vjVyi6e/hD+z9D8yetvxWozfby5TItCCNTgaCEEvNuOf+YOtqFoqy0hSRyddtrURkIwAvVsCShMZOWFjGl2MrYvK/o3ckKFSYzk5tXjHr57AoGBAN8QHkefyU2lRnk4QuL+WWmCL5+gWIOkyjebYCkH0MqGJGK0rVEAbomuVZchX76l/JvaOGkCllo0YXcTi7Sr6IABY4g3cFMWQt6pGkAHNEaNuQLjHdJwZwAK5RjRrCamuOv1j4zsQw4//p/Y3whdFzqJGBbxJxn8HexsNdxkReIz
+  pubKey: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDYXfu4b7xgDSmEGQpQ8Sn3RzFgl5CE4gL4TbYrND4FtCYOrvbgLijkdFgIrVVWi2hUW4K0PwBsmlYhXcbR+JSmqv9zviVXZiym0lK3glJGVCN86r9EPvNTusZZPm40TOEKMVENSYaUjCxZ7JzeZDfQ4WCeQQr2xirqn6LdJjpZ5wIDAQAB
+
+server:
+  port: 8080
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 开启SQL日志
+  global-config:
+    db-config:
+      id-type: auto # 主键策略
+      logic-delete-field: deleted # 逻辑删除字段名
+      logic-delete-value: 1 # 逻辑删除值
+      logic-not-delete-value: 0 # 逻辑未删除值
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml  # 指定 XML 文件的位置
+  type-aliases-package: com.allinpay.checkout.model

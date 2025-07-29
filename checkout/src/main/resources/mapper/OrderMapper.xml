@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.allinpay.checkout.mapper.OrderMapper">
+    <insert id="insertOrder">
+        INSERT INTO `order_info` (bizseq, appid, amount, cusid, status)
+        VALUES (#{bizseq}, #{appid}, #{amount}, #{cusid}, #{status})
+    </insert>
+    <update id="updateOrderStatus">
+        UPDATE `order_info`
+        SET status = #{status}
+        WHERE bizseq = #{bizseq}
+    </update>
+
+    <select id="queryOrderByBizseq" resultType="com.allinpay.checkout.dto.OrderInfo">
+        SELECT bizseq, appid, amount, cusid
+        FROM `order_info`
+        WHERE bizseq = #{bizseq}
+    </select>
+
+    <select id="queryOrderStatus" resultType="java.lang.String">
+        SELECT status
+        FROM `order_info`
+        WHERE bizseq = #{bizseq}
+    </select>
+
+</mapper>

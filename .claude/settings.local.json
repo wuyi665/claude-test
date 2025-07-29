@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p snake-game-java/src/main/java/com/snakegame)",
+      "Bash(mkdir -p snake-game-java/src/main/resources)",
+      "Bash(mvn clean compile)",
+      "Bash(mvn clean package)",
+      "Bash(git add .)",
+      "Bash(git commit -m \"初始提交：完整的Java贪吃蛇游戏项目\n\n🐍 添加了完整的贪吃蛇游戏实现\n- MVC架构设计\n- Swing GUI界面\n- 完整的游戏逻辑\n- 键盘控制和碰撞检测\n- 计分系统和游戏状态管理\n- Maven构建配置\n\n🚀 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\")",
+      "Bash(git init)",
+      "Bash(git remote add origin git@github.com:wuyi665/claude-test.git)"
+    ],
+    "deny": []
+  }
+}
