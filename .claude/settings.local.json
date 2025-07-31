@@ -18,7 +18,12 @@
       "Bash(git add checkout/src/main/java/com/allinpay/checkout/dto/PayOrderReq.java)",
       "Bash(git add checkout/src/main/java/com/allinpay/checkout/dto/PayOrderResp.java)",
       "Bash(git add checkout/src/main/java/com/allinpay/checkout/controller/OrderController.java checkout/src/main/java/com/allinpay/checkout/controller/impl/OrderControllerImpl.java checkout/src/main/java/com/allinpay/checkout/enums/OrderStatus.java checkout/src/main/java/com/allinpay/checkout/service/OrderService.java checkout/src/main/java/com/allinpay/checkout/service/impl/OrderServiceImpl.java)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nAdd Payment Interface to Checkout System\n\n- Add PayOrderReq and PayOrderResp DTOs for payment functionality\n- Extend OrderStatus enum with PROCESSING state for payment workflow\n- Add payOrder endpoint in OrderController with RSA signature verification\n- Implement complete payment business logic in OrderService\n- Support multiple payment types (alipay, wechat, unionpay)\n- Generate payment URLs and order IDs for third-party payment integration\n- Maintain transaction integrity with @Transactional annotations\n- Complete payment flow: PENDING → PROCESSING → COMPLETED\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd Payment Interface to Checkout System\n\n- Add PayOrderReq and PayOrderResp DTOs for payment functionality\n- Extend OrderStatus enum with PROCESSING state for payment workflow\n- Add payOrder endpoint in OrderController with RSA signature verification\n- Implement complete payment business logic in OrderService\n- Support multiple payment types (alipay, wechat, unionpay)\n- Generate payment URLs and order IDs for third-party payment integration\n- Maintain transaction integrity with @Transactional annotations\n- Complete payment flow: PENDING → PROCESSING → COMPLETED\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(mkdir -p \"D:\\Program Files\\Claude Code Project\\snake-game-java\\src\\test\\java\\com\\snakegame\")",
+      "Bash(rm -f \"D:\\Program Files\\Claude Code Project\\checkout\\src\\test\\java\\com\\allinpay\\checkout\\controller\\impl\\OrderControllerImplTest.java\")",
+      "Bash(rm -f \"D:\\Program Files\\Claude Code Project\\checkout\\src\\test\\java\\com\\allinpay\\checkout\\integration\\OrderControllerIntegrationTest.java\")",
+      "Bash(rm -f \"D:\\Program Files\\Claude Code Project\\checkout\\src\\test\\java\\com\\allinpay\\checkout\\utils\\TestDataBuilder.java\")",
+      "Bash(mvn test)"
     ],
     "deny": []
   }
