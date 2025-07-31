@@ -23,7 +23,8 @@
       "Bash(rm -f \"D:\\Program Files\\Claude Code Project\\checkout\\src\\test\\java\\com\\allinpay\\checkout\\controller\\impl\\OrderControllerImplTest.java\")",
       "Bash(rm -f \"D:\\Program Files\\Claude Code Project\\checkout\\src\\test\\java\\com\\allinpay\\checkout\\integration\\OrderControllerIntegrationTest.java\")",
       "Bash(rm -f \"D:\\Program Files\\Claude Code Project\\checkout\\src\\test\\java\\com\\allinpay\\checkout\\utils\\TestDataBuilder.java\")",
-      "Bash(mvn test)"
+      "Bash(mvn test)",
+      "Bash(find \"D:\\Program Files\\Claude Code Project\" -name \"snake-game-java\" -type d)"
     ],
     "deny": []
   }

@@ -1,44 +1,15 @@
 # CLAUDE.md
 
-此文件为Claude Code (claude.ai/code)在此代码库中工作时提供指导。
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 项目概述
 
-此代码库包含两个主要项目：
-1. **Java Swing桌面版贪吃蛇游戏** (`snake-game-java/`) - 使用MVC架构的功能完整的桌面游戏，包含HTML5展示页面(`snake-game-java/snake-game.html`)
-2. **通联支付结账系统** (`checkout/`) - 基于Spring Boot的支付订单管理系统
+此代码库主要包含：
+**通联支付结账系统** (`checkout/`) - 基于Spring Boot 2.3.8的RESTful支付订单管理系统，集成通联支付接口，支持多种支付方式和完整的订单生命周期管理。
 
-**注意：** `utcus-server/` 目录包含第三方企业级项目，在此代码库工作时应忽略该目录。
+**注意：** 代码库中可能包含其他第三方项目目录，在开发时应专注于`checkout/`目录下的支付系统。
 
 ## 构建和开发命令
-
-### 贪吃蛇游戏 - Java版本
-进入`snake-game-java/`目录执行所有Maven命令：
-
-**构建和编译：**
-```bash
-cd snake-game-java
-mvn clean compile
-```
-
-**运行游戏：**
-```bash
-mvn exec:java -Dexec.mainClass="com.snakegame.SnakeGame"
-```
-
-**打包为可执行JAR：**
-```bash
-mvn clean package
-java -jar target/snake-game-1.0.0.jar
-```
-
-**运行测试：**
-```bash
-mvn test
-```
-
-**HTML5展示页面：**
-`snake-game-java/snake-game.html` 为项目展示页面，可在浏览器中查看项目介绍。
 
 ### 通联支付结账系统
 进入`checkout/`目录执行所有Maven命令：
@@ -72,23 +43,6 @@ mvnw.cmd spring-boot:run  # Windows
 ```
 
 ## 架构和代码结构
-
-### 贪吃蛇游戏 - Java版本（MVC模式）
-Java实现遵循严格的模型-视图-控制器架构：
-
-**程序入口：**
-- `SnakeGame.java` - 在EDT上初始化Swing UI的主类
-
-**模型层：**
-- `Snake.java` - 核心蛇实体，包含移动、碰撞检测和增长逻辑
-- `Food.java` - 食物实体，包含位置管理
-
-**视图层：**
-- `GameFrame.java` - 主窗口容器（JFrame）
-- `GamePanel.java` - 游戏渲染表面，包含自定义绘制和输入处理
-
-**控制层：**
-- `GameController.java` - 游戏状态管理，协调模型和视图之间的交互
 
 ### 通联支付结账系统（Spring Boot架构）
 基于Spring Boot 2.3.8的RESTful Web服务：
@@ -131,11 +85,6 @@ Java实现遵循严格的模型-视图-控制器架构：
 - `CheckoutConstants.java` - 系统常量定义
 
 ### 核心设计模式
-**贪吃蛇游戏：**
-- **MVC分离**：游戏逻辑、渲染和用户输入之间界限清晰
-- **组件化**：每个游戏实体都是自包含的，具有各自的职责
-- **状态管理**：在GameController中集中管理游戏状态
-
 **支付系统：**
 - **分层架构**：Controller-Service-Mapper三层架构，职责清晰
 - **依赖注入**：使用Spring的IoC容器管理组件
@@ -149,12 +98,6 @@ Java实现遵循严格的模型-视图-控制器架构：
 **通用要求：**
 - 全程保持Java 8+兼容性
 - 遵循Maven标准目录结构
-
-**贪吃蛇游戏：**
-- 配置Maven Shade插件用于独立JAR分发
-- 正确使用Swing EDT线程进行UI操作
-- 输入验证防止反向移动
-- 按类型分离碰撞检测（边界、自身、食物）
 
 **支付系统：**
 - 使用Spring Boot DevTools进行热重载开发
@@ -184,11 +127,9 @@ Java实现遵循严格的模型-视图-控制器架构：
 - `POST /api/Notify` - 支付结果通知
 
 ### 测试
-**贪吃蛇游戏：**
-- 配置JUnit 4.13.2用于单元测试
-- 测试目录结构遵循Maven约定
-
 **支付系统：**
 - 使用Spring Boot Test进行集成测试
 - 可使用`@SpringBootTest`注解测试完整应用上下文
 - 数据库相关测试建议使用H2内存数据库
+- 测试配置文件：`application-test.yml`
+- 测试数据初始化：`data-test.sql` 和 `schema-test.sql`
