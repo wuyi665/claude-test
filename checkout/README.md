@@ -1,78 +1,46 @@
 # 通联支付结账系统
 
-基于Spring Boot 2.3.8的RESTful支付订单管理系统，提供完整的订单创建、查询和支付通知处理功能。
+基于Spring Boot 2.3.8的RESTful支付订单管理系统，集成了通联支付接口，支持多种支付方式和完整的订单生命周期管理。
 
 ## 项目概述
 
-此项目是一个完整的支付结账系统，采用Spring Boot框架开发，集成MyBatis Plus进行数据库操作，支持RSA和国密SM2加密算法，提供完整的订单管理和支付通知处理功能。
+本系统提供了完整的支付订单处理功能，包括订单创建、查询、支付处理和通知回调等核心功能。系统采用Spring Boot框架，集成MyBatis Plus进行数据持久化，并提供了完善的监控和日志记录功能。
+
+## 主要功能
+
+- ✅ **订单管理**: 支持订单创建、查询和状态更新
+- ✅ **支付处理**: 集成多种支付方式（支付宝、微信、银联等）
+- ✅ **安全加密**: 支持RSA和国密SM2加解密算法
+- ✅ **参数验证**: 完整的请求参数验证和错误处理
+- ✅ **监控指标**: 集成Prometheus监控和健康检查
+- ✅ **连接池**: 使用HikariCP连接池优化数据库性能
+- ✅ **日志记录**: 完善的日志记录和滚动策略
 
 ## 技术栈
 
 - **框架**: Spring Boot 2.3.8
-- **数据库**: MySQL 8.0.22
+- **数据库**: MySQL 8.0+ 
 - **ORM**: MyBatis Plus 3.5.1
-- **加密**: RSA + 国密SM2
-- **构建工具**: Maven 3.x
-- **Java版本**: 1.8+
-
-## 项目结构
-
-```
-checkout/
-├── src/main/java/com/allinpay/checkout/
-│   ├── CheckoutApplication.java          # Spring Boot启动类
-│   ├── aspect/
-│   │   └── RespAspect.java              # AOP响应处理切面
-│   ├── config/
-│   │   └── AllinpayConfig.java          # 通联支付配置类
-│   ├── constants/
-│   │   └── CheckoutConstants.java       # 常量定义
-│   ├── controller/
-│   │   ├── OrderController.java         # 订单控制器接口
-│   │   └── impl/
-│   │       └── OrderControllerImpl.java # 订单控制器实现
-│   ├── dto/
-│   │   ├── NotifyReq.java              # 支付通知请求DTO
-│   │   ├── OrderInfo.java              # 订单信息DTO
-│   │   ├── QueryOrderReq.java          # 查询订单请求DTO
-│   │   └── QueryOrderResp.java         # 查询订单响应DTO
-│   ├── entity/
-│   │   └── BaseResp.java               # 基础响应实体
-│   ├── handler/
-│   │   └── ValidationHandler.java      # 参数验证处理器
-│   ├── mapper/
-│   │   └── OrderMapper.java            # MyBatis数据访问接口
-│   ├── service/
-│   │   ├── OrderService.java           # 订单服务接口
-│   │   └── impl/
-│   │       └── OrderServiceImpl.java   # 订单服务实现
-│   └── utils/
-│       ├── Convert.java                # 转换工具类
-│       ├── RSAutil.java               # RSA加密工具
-│       ├── RandomStr.java             # 随机字符串工具
-│       └── SM2util.java               # 国密SM2加密工具
-├── src/main/resources/
-│   ├── application.yml                 # 应用配置文件
-│   └── mapper/
-│       └── OrderMapper.xml            # MyBatis SQL映射文件
-└── src/test/java/
-    └── com/allinpay/checkout/
-        └── CheckoutApplicationTests.java # 单元测试类
-```
+- **连接池**: HikariCP
+- **验证**: Spring Boot Validation
+- **监控**: Spring Boot Actuator + Micrometer + Prometheus
+- **加密**: RSA + SM2国密算法
+- **构建工具**: Maven 3.6+
+- **Java版本**: JDK 1.8+
 
 ## 快速开始
 
 ### 环境要求
 
 - JDK 1.8+
-- Maven 3.x
-- MySQL 5.7+
+- Maven 3.6+
+- MySQL 8.0+
 
 ### 数据库配置
 
 1. 创建数据库：
 ```sql
-CREATE DATABASE checkout_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE checkout_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 ```
 
 2. 创建订单表：
@@ -82,167 +50,257 @@ CREATE TABLE order_info (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     bizseq VARCHAR(64) NOT NULL COMMENT '业务序列号',
     appid VARCHAR(32) NOT NULL COMMENT '应用ID',
-    amount DECIMAL(10,2) NOT NULL COMMENT '订单金额',
-    cusid VARCHAR(64) NOT NULL COMMENT '客户ID',
-    status INT DEFAULT 0 COMMENT '订单状态',
-    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted INT DEFAULT 0 COMMENT '逻辑删除标识',
-    UNIQUE KEY uk_bizseq (bizseq)
-);
+    cusid VARCHAR(32) NOT NULL COMMENT '客户ID',
+    amount DECIMAL(12,2) NOT NULL COMMENT '订单金额',
+    status VARCHAR(20) DEFAULT 'PENDING' COMMENT '订单状态',
+    paytype VARCHAR(20) COMMENT '支付方式',
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    UNIQUE KEY uk_bizseq (bizseq),
+    INDEX idx_appid_cusid (appid, cusid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单信息表';
 ```
 
-### 配置文件
+### 启动应用
 
-修改 `src/main/resources/application.yml` 中的数据库连接信息：
-
-```yaml
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/checkout_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-    username: root
-    password: 您的数据库密码
-```
-
-### 运行项目
-
-**使用Maven运行：**
+1. **克隆项目并进入目录**：
 ```bash
 cd checkout
+```
+
+2. **使用Maven启动**：
+```bash
 mvn spring-boot:run
 ```
 
-**使用Maven包装器（推荐）：**
+3. **或使用Maven包装器（推荐）**：
 ```bash
-# Linux/Mac
-./mvnw spring-boot:run
-
 # Windows
 mvnw.cmd spring-boot:run
+
+# Linux/Mac
+./mvnw spring-boot:run
 ```
 
-**打包运行：**
+4. **打包运行**：
 ```bash
 mvn clean package
 java -jar target/checkout-0.0.1-SNAPSHOT.jar
 ```
 
-服务启动后访问地址：http://localhost:8080
+### 验证启动
+
+应用启动后访问：
+- **应用端口**: http://localhost:8080
+- **健康检查**: http://localhost:8080/actuator/health
+- **监控指标**: http://localhost:8080/actuator/metrics
+- **Prometheus指标**: http://localhost:8080/actuator/prometheus
 
 ## API接口
 
 ### 1. 创建订单
-- **接口地址**: `POST /api/InsertOrder`
-- **请求参数**: OrderInfo对象
-- **功能描述**: 创建新的支付订单
+```
+POST /api/InsertOrder
+Content-Type: multipart/form-data
+
+参数:
+- appid: 应用ID
+- cusid: 客户ID  
+- bizseq: 业务序列号
+- amount: 订单金额
+- timestamp: 时间戳
+- randomstr: 随机字符串
+- signtype: 签名类型
+- sign: 签名
+```
 
 ### 2. 查询订单
-- **接口地址**: `POST /api/QueryOrder`
-- **请求参数**: QueryOrderReq对象
-- **响应参数**: QueryOrderResp对象
-- **功能描述**: 根据业务序列号查询订单状态
+```
+POST /api/QueryOrder
+Content-Type: multipart/form-data
 
-### 3. 支付通知
-- **接口地址**: `POST /api/Notify`
-- **请求参数**: NotifyReq对象
-- **功能描述**: 接收支付平台的异步通知
-
-## 开发指南
-
-### 架构设计
-
-系统采用经典的三层架构：
-
-- **Controller层**: 负责接收HTTP请求，参数验证，调用Service层
-- **Service层**: 负责业务逻辑处理，事务管理
-- **Mapper层**: 负责数据库操作，SQL映射
-
-### 加密安全
-
-- 支持RSA加密算法进行数据签名验证
-- 集成国密SM2算法，满足国产化要求
-- 密钥配置在application.yml中，生产环境建议使用环境变量
-
-### 参数验证
-
-- 使用Spring Boot Validation进行请求参数验证
-- 自定义ValidationHandler处理参数验证异常
-- 统一响应格式处理
-
-### AOP切面
-
-- RespAspect切面统一处理API响应格式
-- 自动包装返回结果为标准格式
-- 异常统一处理和日志记录
-
-## 测试
-
-### 运行测试
-```bash
-mvn test
+参数:
+- appid: 应用ID
+- cusid: 客户ID
+- bizseq: 业务序列号
+- timestamp: 时间戳
+- randomstr: 随机字符串
+- signtype: 签名类型
+- sign: 签名
 ```
 
-### 集成测试
-项目包含完整的Spring Boot集成测试，测试应用程序上下文加载和基本功能。
+### 3. 订单支付
+```
+POST /api/PayOrder
+Content-Type: multipart/form-data
 
-## 构建和部署
-
-### 编译项目
-```bash
-mvn clean compile
+参数:
+- appid: 应用ID
+- cusid: 客户ID
+- bizseq: 业务序列号
+- paytype: 支付方式 (alipay/wechat/unionpay)
+- payacct: 支付账户(可选)
+- paypasswd: 支付密码(可选)
+- timestamp: 时间戳
+- randomstr: 随机字符串
+- signtype: 签名类型
+- sign: 签名
 ```
 
-### 打包项目
-```bash
-mvn clean package
+### 4. 支付通知
+```
+POST /api/Notify
+Content-Type: multipart/form-data
+
+参数:
+- appid: 应用ID
+- cusid: 客户ID
+- bizseq: 业务序列号
+- status: 支付状态
+- timestamp: 时间戳
+- randomstr: 随机字符串
+- signtype: 签名类型
+- sign: 签名
 ```
 
-### 生产部署
-```bash
-# 后台运行
-nohup java -jar target/checkout-0.0.1-SNAPSHOT.jar > checkout.log 2>&1 &
+## 项目结构
 
-# 使用Spring Profile
-java -jar target/checkout-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+```
+src/main/java/com/allinpay/checkout/
+├── CheckoutApplication.java           # 应用启动类
+├── aspect/                           # AOP切面
+│   └── RespAspect.java              # 响应格式化切面
+├── config/                          # 配置类
+│   └── AllinpayConfig.java         # 通联支付配置
+├── constants/                       # 常量定义
+│   └── CheckoutConstants.java      # 系统常量
+├── controller/                      # 控制层
+│   ├── OrderController.java        # 订单接口定义
+│   └── impl/
+│       └── OrderControllerImpl.java # 订单接口实现
+├── dto/                            # 数据传输对象
+│   ├── NotifyReq.java             # 通知请求DTO
+│   ├── OrderInfo.java             # 订单信息DTO
+│   ├── PayOrderReq.java           # 支付请求DTO
+│   ├── PayOrderResp.java          # 支付响应DTO
+│   ├── QueryOrderReq.java         # 查询请求DTO
+│   └── QueryOrderResp.java        # 查询响应DTO
+├── entity/                         # 实体类
+│   └── BaseResp.java             # 基础响应实体
+├── enums/                         # 枚举类
+│   └── OrderStatus.java          # 订单状态枚举
+├── handler/                       # 处理器
+│   └── ValidationHandler.java    # 参数验证处理器
+├── mapper/                        # 数据访问层
+│   └── OrderMapper.java          # 订单数据访问接口
+├── metrics/                       # 监控指标
+│   └── ApiMetricsAspect.java     # API监控切面
+├── service/                       # 服务层
+│   ├── OrderService.java         # 订单服务接口
+│   └── impl/
+│       └── OrderServiceImpl.java # 订单服务实现
+└── utils/                         # 工具类
+    ├── Convert.java              # 数据转换工具
+    ├── RandomStr.java            # 随机字符串工具
+    ├── RSAutil.java             # RSA加密工具
+    └── SM2util.java             # SM2国密加密工具
 ```
 
 ## 配置说明
 
-### 关键配置项
+### 数据库配置
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/checkout_db
+    username: root
+    password: P@Ut97U8
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+```
 
-- `allinpay.appid`: 通联支付应用ID
-- `allinpay.priKey`: RSA私钥
-- `allinpay.pubKey`: RSA公钥
-- `mybatis-plus.configuration.log-impl`: SQL日志输出
-- `server.port`: 服务端口号
+### 通联支付配置
+```yaml
+allinpay:
+  appid: 00011114
+  c: 1000DBTAPTur
+  priKey: [RSA私钥]
+  pubKey: [RSA公钥]
+```
 
-### 安全注意事项
+### 监控配置
+```yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env
+```
 
-- 生产环境请更换默认的数据库密码
-- RSA密钥对请妥善保管，不要提交到版本控制系统
-- 建议使用HTTPS协议部署到生产环境
-- 敏感配置信息建议使用环境变量或配置中心管理
+## 开发指南
 
-## 贡献指南
+### 代码规范
+- 遵循Spring Boot最佳实践
+- 使用Lombok减少样板代码
+- 统一异常处理和响应格式
+- 完善的参数验证和日志记录
 
-1. Fork 项目
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 创建 Pull Request
+### 测试
+```bash
+# 运行单元测试
+mvn test
+
+# 运行集成测试
+mvn verify
+```
+
+### 监控和运维
+- 集成Spring Boot Actuator提供健康检查
+- 支持Prometheus监控指标收集
+- 提供完整的日志记录和滚动策略
+- 数据库连接池监控
+
+## 安全考虑
+
+- ✅ RSA和SM2双重加密支持
+- ✅ 请求参数签名验证
+- ✅ 敏感信息加密存储
+- ✅ SQL注入防护（MyBatis Plus）
+- ✅ 请求参数验证
+
+## 性能优化
+
+- ✅ HikariCP连接池优化
+- ✅ Tomcat线程池配置
+- ✅ MyBatis Plus查询优化
+- ✅ AOP响应处理优化
+
+## 部署说明
+
+### Docker部署（推荐）
+```bash
+# 构建镜像
+docker build -t checkout-app .
+
+# 运行容器
+docker run -d -p 8080:8080 --name checkout checkout-app
+```
+
+### 传统部署
+```bash
+# 打包
+mvn clean package
+
+# 运行
+java -jar target/checkout-0.0.1-SNAPSHOT.jar
+```
 
 ## 许可证
 
-此项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+本项目采用私有许可证，仅供内部使用。
 
-## 联系方式
+## 贡献
 
-如有问题或建议，请通过以下方式联系：
-
-- 邮箱: developer@allinpay.com
-- 项目Issues: 在GitHub项目页面提交Issue
-
----
-
-**注意**: 本项目仅用于学习和演示目的，生产环境使用前请进行充分的安全审计和测试。
+如有问题或建议，请联系开发团队。

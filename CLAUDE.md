@@ -4,10 +4,11 @@
 
 ## 项目概述
 
-此代码库包含三个项目：
-1. **Java Swing桌面版贪吃蛇游戏** (`snake-game-java/`) - 使用MVC架构的功能完整的桌面游戏
-2. **HTML5/JavaScript网页版贪吃蛇游戏** (`snake-game.html`) - 基于浏览器的单文件实现
-3. **通联支付结账系统** (`checkout/`) - 基于Spring Boot的支付订单管理系统
+此代码库包含两个主要项目：
+1. **Java Swing桌面版贪吃蛇游戏** (`snake-game-java/`) - 使用MVC架构的功能完整的桌面游戏，包含HTML5展示页面(`snake-game-java/snake-game.html`)
+2. **通联支付结账系统** (`checkout/`) - 基于Spring Boot的支付订单管理系统
+
+**注意：** `utcus-server/` 目录包含第三方企业级项目，在此代码库工作时应忽略该目录。
 
 ## 构建和开发命令
 
@@ -36,8 +37,8 @@ java -jar target/snake-game-1.0.0.jar
 mvn test
 ```
 
-### 贪吃蛇游戏 - 网页版本
-直接在网页浏览器中打开`snake-game.html`即可，无需构建过程。
+**HTML5展示页面：**
+`snake-game-java/snake-game.html` 为项目展示页面，可在浏览器中查看项目介绍。
 
 ### 通联支付结账系统
 进入`checkout/`目录执行所有Maven命令：
@@ -93,7 +94,7 @@ Java实现遵循严格的模型-视图-控制器架构：
 基于Spring Boot 2.3.8的RESTful Web服务：
 
 **应用入口：**
-- `CheckoutApplication.java` - Spring Boot主启动类，配置MyBatis扫描
+- `CheckoutApplication.java` - Spring Boot主启动类
 
 **控制层：**
 - `OrderController.java` - 订单相关REST API接口定义
@@ -104,21 +105,30 @@ Java实现遵循严格的模型-视图-控制器架构：
 - `OrderServiceImpl.java` - 订单服务实现
 
 **数据访问层：**
-- `OrderMapper.java` - MyBatis数据访问接口
+- `OrderMapper.java` - MyBatis Plus数据访问接口
 - `OrderMapper.xml` - SQL映射文件
 
 **配置和工具：**
 - `AllinpayConfig.java` - 通联支付配置类
 - `RSAutil.java` - RSA加密签名工具
 - `SM2util.java` - 国密SM2加密工具
+- `Convert.java` - 数据转换工具（新增）
+- `RandomStr.java` - 随机字符串生成工具（新增）
 - `ValidationHandler.java` - 请求参数验证处理器
 - `RespAspect.java` - AOP响应处理切面
+- `ApiMetricsAspect.java` - API监控指标切面
 
 **数据传输对象：**
 - `OrderInfo.java` - 订单信息DTO
 - `QueryOrderReq.java` - 查询订单请求DTO
 - `QueryOrderResp.java` - 查询订单响应DTO
+- `PayOrderReq.java` - 支付订单请求DTO（新增）
+- `PayOrderResp.java` - 支付订单响应DTO（新增）
 - `NotifyReq.java` - 支付通知请求DTO
+
+**枚举和常量：**
+- `OrderStatus.java` - 订单状态枚举
+- `CheckoutConstants.java` - 系统常量定义
 
 ### 核心设计模式
 **贪吃蛇游戏：**
@@ -129,8 +139,10 @@ Java实现遵循严格的模型-视图-控制器架构：
 **支付系统：**
 - **分层架构**：Controller-Service-Mapper三层架构，职责清晰
 - **依赖注入**：使用Spring的IoC容器管理组件
-- **AOP编程**：使用切面处理响应格式化
+- **AOP编程**：使用切面处理响应格式化和API监控
 - **配置外部化**：使用`@ConfigurationProperties`管理配置
+- **监控集成**：集成Prometheus和Actuator进行系统监控
+- **连接池优化**：使用HikariCP优化数据库连接性能
 
 ### 开发指南
 
@@ -152,18 +164,23 @@ Java实现遵循严格的模型-视图-控制器架构：
 - 所有API接口需要进行参数验证
 - 使用MyBatis Plus简化数据库操作
 - 事务管理使用Spring的`@Transactional`注解
+- 集成Actuator和Prometheus进行系统监控
+- 使用HikariCP连接池优化数据库性能
+- 日志记录采用滚动策略，支持按大小和时间分割
 
 ### 数据库配置
 **支付系统需要MySQL数据库：**
 - 数据库名：`checkout_db`
 - 主要表：`order_info`（订单信息表）
-- 字段包括：bizseq（业务序列号）、appid、amount（金额）、cusid（客户ID）、status（状态）
+- 字段包括：bizseq（业务序列号）、appid、amount（金额）、cusid（客户ID）、status（状态）、paytype（支付方式）
 - 默认连接：localhost:3306，用户名root
+- 连接池：使用HikariCP，最小连接数5，最大连接数20
 
 ### API接口
 **支付系统提供的主要接口：**
 - `POST /api/InsertOrder` - 创建订单
 - `POST /api/QueryOrder` - 查询订单
+- `POST /api/PayOrder` - 订单支付（新增）
 - `POST /api/Notify` - 支付结果通知
 
 ### 测试
