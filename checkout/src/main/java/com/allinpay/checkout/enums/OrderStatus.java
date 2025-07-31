@@ -5,9 +5,10 @@ package com.allinpay.checkout.enums;
  */
 public enum OrderStatus {
     PENDING("0", "待支付"),
-    COMPLETED("1", "已完成"),
-    FAILED("2", "支付失败"),
-    CANCELLED("3", "已取消");
+    PROCESSING("1", "支付中"),
+    COMPLETED("2", "已完成"),
+    FAILED("3", "支付失败"),
+    CANCELLED("4", "已取消");
 
     private final String code;
     private final String description;

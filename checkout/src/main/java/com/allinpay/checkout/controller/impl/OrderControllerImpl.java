@@ -5,6 +5,7 @@ import com.allinpay.checkout.constants.CheckoutConstants;
 import com.allinpay.checkout.controller.OrderController;
 import com.allinpay.checkout.dto.NotifyReq;
 import com.allinpay.checkout.dto.OrderInfo;
+import com.allinpay.checkout.dto.PayOrderReq;
 import com.allinpay.checkout.dto.QueryOrderReq;
 import com.allinpay.checkout.entity.BaseResp;
 import com.allinpay.checkout.service.OrderService;
@@ -74,6 +75,24 @@ public class OrderControllerImpl implements OrderController {
             return new BaseResp<>(CheckoutConstants.RETCODE_SUCCESS, CheckoutConstants.RETMSG_SUCCESS, orderService.notify(notifyReq));
         } catch (Exception e) {
             log.error("交易通知异常");
+            return BaseResp.error(CheckoutConstants.RETCODE_FAILURE, e.getMessage());
+        }
+    }
+
+    @Override
+    public BaseResp<?> payOrder(Map<String, String> request) throws Exception {
+        try {
+            log.info("订单支付");
+            //验证签名是否失效
+            if (!RSAutil.verifySign(request, allinpayConfig.getPubKey())) {
+                log.info("验签失败");
+                return BaseResp.error(CheckoutConstants.RETCODE_FAILURE, CheckoutConstants.RETMSG_FAILURE1);
+            }
+            log.info("验签成功");
+            PayOrderReq payOrderReq = Convert.mapToBean(request, PayOrderReq.class);
+            return new BaseResp<>(CheckoutConstants.RETCODE_SUCCESS, CheckoutConstants.RETMSG_SUCCESS, orderService.payOrder(payOrderReq));
+        } catch (Exception e) {
+            log.error("订单支付异常", e);
             return BaseResp.error(CheckoutConstants.RETCODE_FAILURE, e.getMessage());
         }
     }

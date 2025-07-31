@@ -24,4 +24,8 @@ public interface OrderController {
     @PostMapping(path = "/Notify", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     BaseResp<?> notify(@RequestParam Map<String, String> request) throws Exception;
 
+    //订单支付
+    @PostMapping(path = "/PayOrder", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    BaseResp<?> payOrder(@RequestParam Map<String, String> request) throws Exception;
+
 }
